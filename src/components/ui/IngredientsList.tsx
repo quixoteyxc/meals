@@ -9,7 +9,6 @@ export const IngredientsList = ({
   ingredients,
   headText = "Ingredients",
 }: IngredientsListProps) => {
-  console.log(ingredients);
   return (
     <div className="mb-4">
       <h2 className="text-2xl font-semibold mb-4">{headText}</h2>
