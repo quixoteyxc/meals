@@ -1,7 +1,5 @@
 import { create } from "zustand";
 import { Meal } from "@/interfaces/Meal";
-import { LocalStorageService } from "@/services/LocalStorageService";
-import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
 
 interface Store {
   meals: Meal[];
@@ -11,8 +9,14 @@ interface Store {
 }
 
 export const useFavouriteStore = create<Store>((set) => {
-  const storedMeals =
-    LocalStorageService.get<Meal[]>(LOCAL_STORAGE_KEYS.FAVOURITE_MEALS) || [];
+  const isClient = typeof window !== "undefined";
+
+  let storedMeals: Meal[] = [];
+
+  if (isClient) {
+    const stored = localStorage.getItem("FAVOURITE_MEALS");
+    storedMeals = stored ? JSON.parse(stored) : [];
+  }
 
   return {
     meals: storedMeals,
@@ -26,10 +30,9 @@ export const useFavouriteStore = create<Store>((set) => {
           return state;
         }
         const updatedMeals = [...state.meals, meal];
-        LocalStorageService.set(
-          LOCAL_STORAGE_KEYS.FAVOURITE_MEALS,
-          updatedMeals,
-        );
+        if (isClient) {
+          localStorage.setItem("FAVOURITE_MEALS", JSON.stringify(updatedMeals));
+        }
         return { meals: updatedMeals };
       }),
 
@@ -38,16 +41,17 @@ export const useFavouriteStore = create<Store>((set) => {
         const updatedMeals = state.meals.filter(
           (meal) => meal.idMeal !== mealId,
         );
-        LocalStorageService.set(
-          LOCAL_STORAGE_KEYS.FAVOURITE_MEALS,
-          updatedMeals,
-        );
+        if (isClient) {
+          localStorage.setItem("FAVOURITE_MEALS", JSON.stringify(updatedMeals));
+        }
         return { meals: updatedMeals };
       }),
 
     clearMeals: () =>
       set(() => {
-        LocalStorageService.remove(LOCAL_STORAGE_KEYS.FAVOURITE_MEALS);
+        if (isClient) {
+          localStorage.removeItem("FAVOURITE_MEALS");
+        }
         return { meals: [] };
       }),
   };

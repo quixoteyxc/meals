@@ -1,5 +1,4 @@
 "use client";
-
 import { Meal } from "@/interfaces/Meal";
 import { Instructions } from "@/components/ui/Instructions";
 import { useFavouriteStore } from "@/store/favouriteStore";

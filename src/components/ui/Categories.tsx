@@ -18,6 +18,7 @@ export default function CategoryList({ onCategoryChange }: CategoryListProps) {
         const fetchedCategories = await service.getCategories();
         setCategories(fetchedCategories);
       } catch (error) {
+        console.warn(error);
         setIsError(true);
       } finally {
         setIsLoading(false);
